@@ -7,111 +7,148 @@ import { login } from "../redux/apiCalls";
 import { useDispatch, useSelector } from "react-redux";
 import userRedux from "../redux/userRedux";
 import { Navigate, useNavigate } from "react-router-dom";
+import { IconButton, InputAdornment } from "@mui/material";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import Loading from "../components/Loading";
+const Form = styled("form")({
+  display: "flex",
+  flexDirection: "column",
+  maxWidth: "300px",
+  justifyContent: "space-between",
+});
 const Login = () => {
   const dispatch = useDispatch();
   const Navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const { isFetching, error } = useSelector((state) => state.user);
-
+  const [loading, setLoading] = useState(false);
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
+  };
+  const setEmails = (event) => {
+    setEmail(event.target.value);
+  };
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
   const handleClick = async (e) => {
     e.preventDefault();
+    setLoading(true);
     let l = await login(dispatch, { email, password });
-    
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    setLoading(false);
     if (l.success) {
-      Navigate("/");
-    }else{
-      Navigate("/login");
+      Navigate("/"); // Set loading to false when the operation is complete
+      // Minimum of 2000 milliseconds (2 seconds)
+    } else {
+      Navigate("/login"); // Set loading to false when the operation is complete
     }
   };
 
-  const Form = styled("form")({
-    display: "flex",
-    flexDirection: "column",
-    maxWidth: "300px",
-    justifyContent: "space-between",
-  });
-
   return (
-    <Box
-      sx={{
-        border: 4,
-        height: "70vh",
-        width: "30vw",
-        margin: "auto",
-        mt: 10,
-        positon: "absolute",
-        borderRadius: "8px",
-      }}
-    >
-      <Stack sx={{ justifyContent: "center", alignItems: "center" }}>
+    <>
+      {loading ? (
+        <Loading />
+      ) : (
         <Box
           sx={{
-            height: "8vh",
-            width: "20vw",
-            position: "relative",
-            top: "30px",
-            mb: 8,
+            border: 4,
+            height: "70vh",
+            width: "30vw",
+            margin: "auto",
+            mt: 10,
+            positon: "absolute",
+            borderRadius: "8px",
           }}
         >
-          <Typography
-            variant="h4"
-            sx={{ color: "black", mt: 1, display: { xs: "none", md: "flex" } }}
-          >
-            KRAPTIN CARE
-          </Typography>
-        </Box>
-        <Form sx={{ maxWidth: 500 }} onSubmit="">
-          <TextField
-            id="outlined-basic"
-            label="Email"
-            variant="outlined"
-            sx={{ mb: 2 }}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <TextField
-            name="password"
-            type="password"
-            id="Password"
-            label="Password"
-            variant="outlined"
-            sx={{ mb: 2 }}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <Stack sx={{ justifyContent: "center", alignItems: "center" }}>
+            <Box
+              sx={{
+                height: "8vh",
+                width: "20vw",
+                position: "relative",
+                top: "30px",
+                mb: 8,
+              }}
+            >
+              <Typography
+                variant="h5"
+                sx={{
+                  color: "black",
+                  mt: 1,
+                  display: { xs: "none", md: "flex" },
+                }}
+              >
+                EXPENSE MANAGER
+              </Typography>
+            </Box>
+            <Form sx={{ maxWidth: 500 }} onSubmit="">
+              <TextField
+                type="text"
+                name="email"
+                id="outlined-basic"
+                label="Email"
+                variant="outlined"
+                sx={{ mb: 2 }}
+                value={email}
+                onChange={setEmails}
+              />
+              <TextField
+                sx={{ mb: 2 }}
+                type={showPassword ? "text" : "password"}
+                label="Password"
+                variant="outlined"
+                fullWidth
+                value={password}
+                onChange={handlePasswordChange}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={handleTogglePasswordVisibility}>
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
 
-          <Button
-            onClick={handleClick}
-            disabled={isFetching}
-            variant="contained"
-            sx={{
-              mb: "10px",
-              "&:hover": {
-                color: "white",
-                bgcolor: "green",
-              },
-            }}
-          >
-            SIGN IN
-          </Button>
-          <Button
-            disabled={isFetching}
-            variant="contained"
-            sx={{
-              "&:hover": {
-                color: "white",
-                bgcolor: "green",
-              },
-            }}
-          >
-            <GoogleIcon />
-            &nbsp; Google
-          </Button>
-          {error ? <div>Something went wrong</div> : <></>}
-        </Form>
-      </Stack>
-    </Box>
+              <Button
+                onClick={handleClick}
+                disabled={isFetching}
+                variant="contained"
+                sx={{
+                  mb: "10px",
+                  "&:hover": {
+                    color: "white",
+                    bgcolor: "green",
+                  },
+                }}
+              >
+                SIGN IN
+              </Button>
+              <Button
+                disabled={isFetching}
+                variant="contained"
+                sx={{
+                  "&:hover": {
+                    color: "white",
+                    bgcolor: "green",
+                  },
+                }}
+              >
+                <GoogleIcon />
+                &nbsp; Google
+              </Button>
+              {error ? <div>Something went wrong</div> : <></>}
+            </Form>
+          </Stack>
+        </Box>
+      )}
+    </>
   );
 };
 

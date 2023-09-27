@@ -4,13 +4,19 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Navbar from "../components/Navbar";
 import { updateprofile } from "../redux/apiCalls";
+import {TextField} from "@mui/material";
+import { IconButton, InputAdornment } from "@mui/material";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import Loading from "../components/Loading";
 const Profile = () => {
   const user = useSelector((state) => state.user);
-  const userid = user.currentUser.data.user._id;
+  const userid = user.currentUser.data.user.id;
   const dispatch = useDispatch();
-  const [name, setName] = useState(user.currentUser.data.user.name);
+  const [name, setName] = useState(user.currentUser.data.user.username);
   const [email, setEmail] = useState(user.currentUser.data.user.email);
   const [password, setPassword] = useState(user.currentUser.data.user.password);
+  const [showPassword, setShowPassword] = useState(false);
   const [avatar, setImage] = useState();
   const handleUpdate = async (e) => {
     e.preventDefault();
@@ -22,15 +28,25 @@ const Profile = () => {
    console.log(userid);
     let res = await updateprofile(dispatch, formdata,userid);
   };
+  
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
+  };
+  const setEmails = (event) => {
+    setEmail(event.target.value);
+  };
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
   return (
     <>
       <Navbar />
 
       <Box
         sx={{
-          height: "50vh",
+          height: "60vh",
           width: "40vw",
-          bgcolor: "skyblue",
+          border:"2px solid black",
           m: "auto",
           mt: 10,
           display: "flex",
@@ -49,32 +65,44 @@ const Profile = () => {
           }}
         >
           <label style={{marginLeft:"-250px"}}>Name</label>
-          <input
-            style={{ padding: 8, width: "60%",borderRadius:"6px" }}
-            type="text"
-            placeholder="Enter your name"
-            name="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          ></input>
-          <label style={{marginLeft:"-250px"}}>Email</label>
-          <input
-            style={{ padding: 8, width: "60%" ,borderRadius:"6px"}}
-            type="text"
-            placeholder="Enter your email"
-            name="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          ></input>
-          <label style={{marginLeft:"-250px"}}>Password</label>
-          <input
-            style={{ padding: 8, width: "60%" ,borderRadius:"6px"}}
-            type="password"
-            name="password"
-            placeholder="Enter your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          ></input>
+          <TextField
+                name="name"
+                type="input"
+                id="outlined-basic"
+                label="Name"
+                variant="outlined"
+                sx={{ mb: 2 }}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+          <TextField
+                type="text"
+                name="email"
+                id="outlined-basic"
+                label="Email"
+                variant="outlined"
+                sx={{ mb: 2 }}
+                value={email}
+                onChange={setEmails}
+              />
+          <TextField
+                sx={{ mb: 2 , width:"18vw", margin:"auto" }}
+                type={showPassword ? "text" : "password"}
+                label="Password"
+                variant="outlined"
+                fullWidth
+                value={password}
+                onChange={handlePasswordChange}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={handleTogglePasswordVisibility}>
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
           <label style={{marginLeft:"-220px"}}>Profile Image</label>
           <input
             style={{ padding: 8, width: "60%" }}

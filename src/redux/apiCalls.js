@@ -7,7 +7,9 @@ export const signup = async (dispatch, user) => {
     const res = await publicRequest.post("/user/sign-up", user);
 
     return res.data;
-  } catch (err) {}
+  } catch (err) {
+    console.log("Error while signup" , err);
+  }
 };
 
 export const login = async (dispatch, user) => {
@@ -26,8 +28,8 @@ export const updateprofile = async (dispatch, formdata, userid) => {
   dispatch(loginStart());
 
   try {
-    const res = await axios.post(
-      `https://kratin-care.onrender.com/api/user/update/${userid}`,
+    const res = await axios.put(
+      `http://localhost:8000/api/user/update/${userid}`,
       formdata,
       {
         headers: {
