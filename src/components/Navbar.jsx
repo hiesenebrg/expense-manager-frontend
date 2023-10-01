@@ -13,10 +13,13 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 // import "../styles/navbar.css";
+import { useState } from "react";
+import jsPDF from 'jspdf';
 import { Icon } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../redux/userRedux";
 import { Link, useNavigate } from "react-router-dom";
+import 'jspdf-autotable';
 const pages = [ "GithubLink"];
 const link = [
   
@@ -28,7 +31,9 @@ function Navbar() {
   const dispatch = useDispatch();
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [pdfBlob, setPdfBlob] = useState(null);
   const user = useSelector((state) => state.user.currentUser);
+  const expensedata = useSelector((state) => state.info.expenses);
   let userdata = user.data.user;
   console.log("This is line number 34" , userdata);
   const Navigate = useNavigate();
@@ -52,6 +57,33 @@ function Navbar() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  const handleDownload = () => {
+    if (pdfBlob) {
+      const a = document.createElement('a');
+      a.href = pdfBlob;
+      a.download = 'data.pdf';
+      a.click();
+    }
+  };
+  const generatePDF = () => {
+    const doc = new jsPDF();
+    doc.text('Report of All the Expenses', 10, 10);
+
+    const tableColumnHeaders = Object.keys(expensedata[0]);
+    const tableRows = expensedata.map((item) => Object.values(item));
+
+    doc.autoTable({
+      head: [tableColumnHeaders],
+      body: tableRows,
+      startY: 20,
+    });
+
+    const pdfDataUri = doc.output('datauristring');
+    setPdfBlob(pdfDataUri);
+  };
+
+
 
   return (
     <AppBar position="static">
@@ -92,6 +124,7 @@ function Navbar() {
             >
               <MenuIcon />
             </IconButton>
+            
             <Menu
               id="menu-appbar"
               anchorEl={anchorElNav}
@@ -162,7 +195,12 @@ function Navbar() {
               </Link>
             ))}
           </Box>
-
+          {expensedata.length>0 ?(<><Button onClick={generatePDF}>
+            Generate PDF
+      
+            </Button>
+            <Button onClick={handleDownload}>Download PDF</Button></>):(<></>)}
+          
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

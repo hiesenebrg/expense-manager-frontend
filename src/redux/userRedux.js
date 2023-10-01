@@ -15,6 +15,7 @@ const userSlice = createSlice({
       state.isFetching = false;
 
       state.currentUser = action.payload;
+      console.log(action.payload);
       // state.currentUser = action.payload.data.user;
     },
     loginFailure: (state) => {
@@ -33,7 +34,7 @@ const userSlice = createSlice({
     },
     logout: (state) => {
       state.currentUser = null;
-      state.info = null;
+      // state.info = null;
       state.isFetching = false;
     },
   },

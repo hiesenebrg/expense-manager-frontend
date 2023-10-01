@@ -38,14 +38,13 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     let l = await login(dispatch, { email, password });
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+   
 
     setLoading(false);
     if (l.success) {
-      Navigate("/"); // Set loading to false when the operation is complete
-      // Minimum of 2000 milliseconds (2 seconds)
+      Navigate("/"); 
     } else {
-      Navigate("/login"); // Set loading to false when the operation is complete
+      Navigate("/login"); 
     }
   };
 

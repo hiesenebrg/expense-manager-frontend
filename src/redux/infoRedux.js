@@ -4,42 +4,53 @@ const infoSlice = createSlice({
   name: "info",
   initialState: {
     cure: null,
-    info: null,
+    expenses: [],
     isFetching: false,
     error: false,
   },
   reducers: {
-    infoStart: (state) => {
+    Start: (state, action) => {
       state.isFetching = true;
     },
-    infoSuccess: (state, action) => {
-      state.isFetching = false;
-      state.info = action.payload;
+    addexpenses: (state, action) => {
+      console.log("While adding the expeses ", action.payload);
+      state.expenses.push(action.payload);
     },
-    infoFailure: (state) => {
+
+    deleteexpense: (state, action) => {
+      const indexToRemove = state.expenses.findIndex(
+        (expense) => expense._id === action.payload
+      );
+      console.log(indexToRemove, " ", action.payload);
+      if (indexToRemove > -1) {
+        state.expenses.splice(indexToRemove, 1);
+      }
+    },
+    updateexpense: (state, action) => {
+      state.expenses = action.payload;
+    },
+
+    Success: (state, action) => {
+      state.isFetching = false;
+    },
+    Failure: (state) => {
       state.isFetching = false;
       state.error = true;
     },
-    getinfoStart: (state) => {
-      state.isFetching = true;
-    },
-    getinfoSuccess: (state, action) => {
-      state.isFetching = false;
-      state.cure = action.payload;
-    },
-    getinfoFailure: (state) => {
-      state.isFetching = false;
-      state.error = true;
+    emptyExpenses: (state, action) => {
+      state.expenses = [];
     },
   },
 });
 
 export const {
-  infoFailure,
-  infoStart,
-  infoSuccess,
-  getinfoFailure,
-  getinfoStart,
-  getinfoSucces,
+  Failure,
+  Start,
+  addexpenses,
+  deleteexpense,
+  Success,
+  updateexpense,
+
+  emptyExpenses,
 } = infoSlice.actions;
 export default infoSlice.reducer;

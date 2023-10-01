@@ -1,6 +1,14 @@
-import { loginFailure, loginStart, loginSuccess, update } from "./userRedux";
+import { loginFailure, loginStart, loginSuccess } from "./userRedux";
 import { publicRequest, userRequest } from "../requestMethods";
-import { infoFailure, infoStart, infoSuccess } from "./infoRedux";
+import {
+  Failure,
+  Start,
+  addexpenses,
+  deleteexpense,
+  Success,
+  updateexpense,
+} from "./infoRedux";
+
 import axios from "axios";
 export const signup = async (dispatch, user) => {
   try {
@@ -8,7 +16,7 @@ export const signup = async (dispatch, user) => {
 
     return res.data;
   } catch (err) {
-    console.log("Error while signup" , err);
+    console.log("Error while signup", err);
   }
 };
 
@@ -17,7 +25,7 @@ export const login = async (dispatch, user) => {
   try {
     const res = await publicRequest.post("/user/sign-in", user);
     dispatch(loginSuccess(res.data));
-
+    console.log(res.data);
     return res.data;
   } catch (err) {
     dispatch(loginFailure());
@@ -38,50 +46,40 @@ export const updateprofile = async (dispatch, formdata, userid) => {
       }
     );
 
-    dispatch(update(res.data));
+    dispatch(updateexpense(res.data));
     console.log(res.data);
     return res.data;
   } catch (err) {
-    dispatch(infoFailure());
+    dispatch(Failure());
   }
 };
 
-export const info = async (dispatch, info) => {
-  dispatch(infoStart());
+export const addexpense = async (dispatch, info) => {
+  dispatch(Start());
 
   try {
-    const res = await userRequest.post("/user/info/create", info);
-    console.log(res);
-    dispatch(infoSuccess(res.data));
-    console.log(res.data);
+    const res = await userRequest.post("/todo/create", info);
+
+    dispatch(Success());
+
     return res.data;
   } catch (err) {
-    dispatch(infoFailure());
+    dispatch(Failure());
   }
 };
 
-export const getinfo = async (dispatch, userid) => {
-  dispatch(infoStart());
+// export const updateexpenses = async (dispatch, expense_id, info) => {
+//   dispatch(Start());
 
-  try {
-    const res = await userRequest.post("/user/info/getinfo", { userid });
-
-    dispatch(infoSuccess(res.data));
-    return res.data;
-  } catch (err) {
-    dispatch(infoFailure());
-  }
-};
-
-export const getcure = async (dispatch, prompt) => {
-  dispatch(infoStart());
-
-  try {
-    const res = await userRequest.post("/getdata/prompt", prompt);
-
-    dispatch(infoSuccess(res.data));
-    return res.data;
-  } catch (err) {
-    dispatch(infoFailure());
-  }
-};
+//   try {
+//     const id = expense_id;
+    
+//     console.log(res.data);
+//     dispatch(updateexpense(res.data.data.todos));
+   
+//     dispatch(Success());
+//     return res.data;
+//   } catch (err) {
+//     dispatch(Failure());
+//   }
+// };
