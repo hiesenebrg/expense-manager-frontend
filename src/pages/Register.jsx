@@ -3,7 +3,7 @@ import { Box, Button, Stack, TextField, Typography } from "@mui/material";
 import React from "react";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { signup } from "../redux/apiCalls";
 import { IconButton, InputAdornment } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
@@ -143,6 +143,11 @@ const Register = () => {
                 Register
               </Button>
             </Form>
+            <div style={{textDecoration:"none"}}>
+            <Link to="/login">
+            <Typography  variant="body1" color="initial">Already registered! Login here</Typography>
+            </Link>
+            </div>
           </Stack>
         </Box>
       )}

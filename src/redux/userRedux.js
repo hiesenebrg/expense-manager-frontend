@@ -16,6 +16,7 @@ const userSlice = createSlice({
 
       state.currentUser = action.payload;
       console.log(action.payload);
+      state.error = false;
       // state.currentUser = action.payload.data.user;
     },
     loginFailure: (state) => {
@@ -23,13 +24,12 @@ const userSlice = createSlice({
       state.error = true;
     },
     update: (state, action) => {
-      const data = action.payload;
-      const user = data.data.user;
-      state.currentUser.data.user.email = user.email;
-      state.currentUser.data.user.name = user.name;
-      state.currentUser.data.user.password = user.password;
-      if (user.avatar) {
-        state.currentUser.data.user.avatar = user.avatar;
+     console.log(action.payload);
+      state.currentUser.data.user.email = action.payload.email;
+      state.currentUser.data.user.username = action.payload.name;
+      state.currentUser.data.user.password = action.payload.password;
+      if (action.payload.avatar) {
+        state.currentUser.data.user.avatar = action.payload.avatar;
       }
     },
     logout: (state) => {

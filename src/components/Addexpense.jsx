@@ -16,11 +16,11 @@ import { useAsyncValue } from "react-router-dom";
 import { addexpenses } from "../redux/infoRedux";
 
 const Addexpense = () => {
-  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const [selectedDate, setSelectedDate] = useState();
   const [category, setCategory] = React.useState("");
   const [description, setDescription] = useState("");
+  const [error, setError] = useState(false);
   const [price, setPrice] = useState(0);
   const addDescription = (event) => {
     setDescription(event.target.value);
@@ -39,20 +39,35 @@ const Addexpense = () => {
     console.log(price);
   };
   const date = selectedDate?.format("DD-MM-YYYY");
-  const addExpense = async () => {
-    setLoading(true);
-    console.log("add expense called");
-    let res = await addexpense(dispatch, {
-      description,
-      category,
-      date,
-      price,
-    });
-    console.log(res.data.todo);
 
-    dispatch(addexpenses(res.data.todo));
-    setLoading(false);
+  const addExpense = async () => {
+    try {
+      if (
+        !selectedDate ||
+        !description ||
+        !category ||
+        !price ||
+        typeof price !== "number"
+      ) {
+        setError(true);
+      } else {
+        setError(false);
+      }
+      console.log(error);
+      
+        let res = await addexpense(dispatch, {
+          description,
+          category,
+          date,
+          price,
+        });
+        console.log(res.data.todo);
+
+        dispatch(addexpenses(res.data.todo));
+      
+    } catch (error) {}
   };
+
   return (
     <>
       <Box
@@ -139,6 +154,9 @@ const Addexpense = () => {
               Add expense
             </Button>
           </Box>
+          {error && (
+            <Box> please fill all the details and price should be number</Box>
+          )}
         </Box>
       </Box>
     </>

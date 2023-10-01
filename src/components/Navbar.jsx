@@ -14,17 +14,14 @@ import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 // import "../styles/navbar.css";
 import { useState } from "react";
-import jsPDF from 'jspdf';
+import jsPDF from "jspdf";
 import { Icon } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../redux/userRedux";
 import { Link, useNavigate } from "react-router-dom";
-import 'jspdf-autotable';
-const pages = [ "GithubLink"];
-const link = [
-  
-  "https://github.com/adarshshiftboolean/habbittracker",
-];
+import "jspdf-autotable";
+const pages = [];
+const link = ["https://github.com/adarshshiftboolean/habbittracker"];
 const settings = ["Profile"];
 
 function Navbar() {
@@ -34,8 +31,9 @@ function Navbar() {
   const [pdfBlob, setPdfBlob] = useState(null);
   const user = useSelector((state) => state.user.currentUser);
   const expensedata = useSelector((state) => state.info.expenses);
+  const [downloadpdfbutton, setdownloadpdfbutton] = useState(false);
   let userdata = user.data.user;
-  console.log("This is line number 34" , userdata);
+  console.log("This is line number 34", userdata);
   const Navigate = useNavigate();
   const logoutt = (e) => {
     e.preventDefault();
@@ -60,15 +58,16 @@ function Navbar() {
 
   const handleDownload = () => {
     if (pdfBlob) {
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = pdfBlob;
-      a.download = 'data.pdf';
+      a.download = "data.pdf";
       a.click();
+      setdownloadpdfbutton(false);
     }
   };
   const generatePDF = () => {
     const doc = new jsPDF();
-    doc.text('Report of All the Expenses', 10, 10);
+    doc.text("Report of All the Expenses", 10, 10);
 
     const tableColumnHeaders = Object.keys(expensedata[0]);
     const tableRows = expensedata.map((item) => Object.values(item));
@@ -79,11 +78,10 @@ function Navbar() {
       startY: 20,
     });
 
-    const pdfDataUri = doc.output('datauristring');
+    const pdfDataUri = doc.output("datauristring");
     setPdfBlob(pdfDataUri);
+    setdownloadpdfbutton(true);
   };
-
-
 
   return (
     <AppBar position="static">
@@ -107,10 +105,11 @@ function Navbar() {
               display: { xs: "none", md: "flex" },
               fontFamily: "roboto",
               ml: 1,
+              textDecoration:"none"
             }}
             className="navbar-heading"
           >
-            ExpenseManager
+            Expense Manager
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
@@ -124,31 +123,6 @@ function Navbar() {
             >
               <MenuIcon />
             </IconButton>
-            
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
-              sx={{
-                display: { xs: "block", md: "none" },
-              }}
-            >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
           </Box>
           <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
           <Typography
@@ -170,37 +144,30 @@ function Navbar() {
             Kratin Care
           </Typography>
           <Box
-            sx={{ flexGrow: 1, display: { xs: "none", md: "flex" }, ml: 70 }}
+            sx={{ flexGrow: 1, display: { xs: "none", md: "flex" }, ml: 60 }}
           >
-            {pages.map((page, index) => (
-              <Link to={link[index]} sx={{ textDecoration: "none" }}>
-                <Button
-                  variant="contained"
-                  key={page}
-                  onClick={handleCloseNavMenu}
-                  sx={{
-                    textDecoration: "none",
-                    mr: 1,
-                    my: 2,
-                    color: "white",
-                    display: "block",
-                    bgcolor: "skyblue",
-                    "&:hover": {
-                      bgcolor: "green",
-                    },
-                  }}
-                >
-                  {page}
-                </Button>
-              </Link>
-            ))}
+            {expensedata.length > 0 ? (
+              <>
+                {!downloadpdfbutton && (
+                  <Button variant="outlined" onClick={generatePDF}>
+                    Generate PDF
+                  </Button>
+                )}
+                {downloadpdfbutton && (
+                  <Button
+                    variant="outlined"
+                    sx={{ ml: 3 }}
+                    onClick={handleDownload}
+                  >
+                    Download PDF
+                  </Button>
+                )}
+              </>
+            ) : (
+              <></>
+            )}
           </Box>
-          {expensedata.length>0 ?(<><Button onClick={generatePDF}>
-            Generate PDF
-      
-            </Button>
-            <Button onClick={handleDownload}>Download PDF</Button></>):(<></>)}
-          
+
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -220,7 +187,7 @@ function Navbar() {
                     display: { xs: "none", md: "flex" },
                   }}
                 >
-                  {userdata?.name}
+                  {userdata?.username}
                 </Typography>
                 {user && (
                   <Button onClick={logoutt} sx={{ ml: 2 }}>

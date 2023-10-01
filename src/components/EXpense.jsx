@@ -31,6 +31,8 @@ const EXpense = ({ expense }) => {
   const [price, setPrice] = useState(expense.price);
   const [showFullText, setShowFullText] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [error, setError] = useState(false);
+
   const dispatch = useDispatch();
   const addDescription = (event) => {
     setDescription(event.target.value);
@@ -63,34 +65,41 @@ const EXpense = ({ expense }) => {
   };
   const dates = selectedDate?.format("DD-MM-YYYY");
   const editexpense = async () => {
-    const dateString = dates;
-    const parts = dateString.split("-");
-    const day = parseInt(parts[0], 10);
-    const month = parseInt(parts[1], 10) - 1;
-    const year = parseInt(parts[2], 10);
-    const date = new Date(year, month, day);
-    console.log("the id to delete", expense._id);
-    const info = { price, description, date, category };
+    try {
+      const dateString = dates;
+      const parts = dateString.split("-");
+      const day = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1;
+      const year = parseInt(parts[2], 10);
+      const date = new Date(year, month, day);
+      console.log("the id to delete", expense._id);
+      if (typeof price !== "number") {
+        setError(true);
+      } else {
+        setError(false);
+      }
+      const info = { price, description, date, category };
+console.log(error);
+      const res = await userRequest.put(`/todo/update/${expense._id}`, info);
+      console.log(res.data.data);
 
-    const res = await userRequest.put(`/todo/update/${expense._id}`, info);
-    console.log(res.data.data);
+      const newNumbers = [...expensess];
+      console.log(`this will be the update data ${res.data.data.todo}`);
 
-    const newNumbers = [...expensess];
-    console.log(`this will be the update data ${res.data.data.todo}`);
+      const indexToUpdate = newNumbers.findIndex(
+        (expense) => expense._id === res.data.data.todo._id
+      );
+      console.log(
+        `the id that need to be updated is  ${res.data.data.todo._id} and the index is ${indexToUpdate}`
+      );
+      newNumbers[indexToUpdate] = res.data.data.todo;
+      console.log(newNumbers);
 
-    const indexToUpdate = newNumbers.findIndex(
-      (expense) => expense._id === res.data.data.todo._id
-    );
-    console.log(
-      `the id that need to be updated is  ${res.data.data.todo._id} and the index is ${indexToUpdate}`
-    );
-    newNumbers[indexToUpdate] = res.data.data.todo;
-    console.log(newNumbers);
+      dispatch(updateexpense(newNumbers));
 
-    dispatch(updateexpense(newNumbers));
-
-    // dispatch(updateexpense(res.data.data.todos))
-    setEditMode(false);
+      // dispatch(updateexpense(res.data.data.todos))
+      setEditMode(false);
+    } catch (error) {}
   };
   const cancelEdit = () => {
     setEditMode(false);
@@ -110,16 +119,16 @@ const EXpense = ({ expense }) => {
             style={{
               display: "flex",
               flexDirection: "row",
-              width:"63vw",
+              width: "63vw",
               maxWidth: "63vw",
 
               height: "18vh",
-              maxHeight:"80vh",
+              maxHeight: "80vh",
               backgroundColor: "#f0f0f0",
               border: "2px solid black",
               borderRadius: "5px",
               flexWrap: "wrap",
-              marginTop:"20px"
+              marginTop: "20px",
             }}
           >
             <Box
@@ -137,27 +146,30 @@ const EXpense = ({ expense }) => {
                 justifyContent: "space-between",
               }}
             >
-              
-                <Typography style={{marginTop:"20px"}} variant="h4" color="initial">
-                  {expense.description.length > 20 ? (
-                    <div>
-                      {showFullText ? (
-                        <span>
-                          {expense.description}
-                          <button onClick={toggleText}>Show Less</button>
-                        </span>
-                      ) : (
-                        <span>
-                          {expense.description.slice(0, 20)}...
-                          <button onClick={toggleText}>Show More</button>
-                        </span>
-                      )}
-                    </div>
-                  ) : (
-                    <span>{expense.description}</span>
-                  )}
-                </Typography>
-             
+              <Typography
+                style={{ marginTop: "20px" }}
+                variant="h4"
+                color="initial"
+              >
+                {expense.description.length > 20 ? (
+                  <div>
+                    {showFullText ? (
+                      <span>
+                        {expense.description}
+                        <button onClick={toggleText}>Show Less</button>
+                      </span>
+                    ) : (
+                      <span>
+                        {expense.description.slice(0, 20)}...
+                        <button onClick={toggleText}>Show More</button>
+                      </span>
+                    )}
+                  </div>
+                ) : (
+                  <span>{expense.description}</span>
+                )}
+              </Typography>
+
               <Box
                 style={{
                   display: "flex",
@@ -237,7 +249,7 @@ const EXpense = ({ expense }) => {
                     color="secondary"
                     onClick={handleEdit}
                   >
-                    <ModeEditIcon style = {{color:"white" }}/>
+                    <ModeEditIcon style={{ color: "white" }} />
                   </IconButton>
                 </div>
               </Box>
@@ -258,8 +270,9 @@ const EXpense = ({ expense }) => {
                     color="secondary"
                     onClick={handleDelete}
                   >
-                    <DeleteIcon style = {{color:"white" }} />
+                    <DeleteIcon style={{ color: "white" }} />
                   </IconButton>
+                  
                 </div>
               </Box>
             </Box>
@@ -374,7 +387,16 @@ const EXpense = ({ expense }) => {
               {" "}
               Cancel
             </Button>
+           
           </Box>
+          
+          {error ? (
+                    <Box style={{textAlign:"center"}}>
+                      please fill all the details and price should be number
+                    </Box>
+                  ) : (
+                    <></>
+                  )}
         </Box>
       )}
     </>

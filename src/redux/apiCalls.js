@@ -1,4 +1,4 @@
-import { loginFailure, loginStart, loginSuccess } from "./userRedux";
+import { loginFailure, loginStart, loginSuccess, update } from "./userRedux";
 import { publicRequest, userRequest } from "../requestMethods";
 import {
   Failure,
@@ -46,8 +46,8 @@ export const updateprofile = async (dispatch, formdata, userid) => {
       }
     );
 
-    dispatch(updateexpense(res.data));
-    console.log(res.data);
+    dispatch(update(res.data.data.user));
+    // console.log(res.data.data.user);
     return res.data;
   } catch (err) {
     dispatch(Failure());

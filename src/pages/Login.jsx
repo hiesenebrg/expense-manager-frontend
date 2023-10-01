@@ -6,7 +6,7 @@ import { useState } from "react";
 import { login } from "../redux/apiCalls";
 import { useDispatch, useSelector } from "react-redux";
 import userRedux from "../redux/userRedux";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { IconButton, InputAdornment } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
@@ -36,16 +36,13 @@ const Login = () => {
   };
   const handleClick = async (e) => {
     e.preventDefault();
+    
     setLoading(true);
     let l = await login(dispatch, { email, password });
    
 
     setLoading(false);
-    if (l.success) {
-      Navigate("/"); 
-    } else {
-      Navigate("/login"); 
-    }
+    
   };
 
   return (
@@ -129,7 +126,7 @@ const Login = () => {
               >
                 SIGN IN
               </Button>
-              <Button
+              {/* <Button
                 disabled={isFetching}
                 variant="contained"
                 sx={{
@@ -141,9 +138,14 @@ const Login = () => {
               >
                 <GoogleIcon />
                 &nbsp; Google
-              </Button>
-              {error ? <div>Something went wrong</div> : <></>}
+              </Button> */}
+              {error ? <div>Oops! Email or Password is wrong</div> : <></>}
             </Form>
+            <div style={{textDecoration:"none"}}>
+            <Link to="/register">
+            <Typography style={{marginTop:"10px",textDecoration:"none",}} variant="body1" color="initial">Not registered! Register here</Typography>
+            </Link>
+            </div>
           </Stack>
         </Box>
       )}

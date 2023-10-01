@@ -27,6 +27,7 @@ const Profile = () => {
 
    console.log(userid);
     let res = await updateprofile(dispatch, formdata,userid);
+    
   };
   
   const handlePasswordChange = (event) => {
