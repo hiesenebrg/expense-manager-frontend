@@ -73,7 +73,7 @@ const EXpense = ({ expense }) => {
       const year = parseInt(parts[2], 10);
       const date = new Date(year, month, day);
       console.log("the id to delete", expense._id);
-      if (typeof price !== "number") {
+      if (!selectedDate || typeof price !== "number") {
         setError(true);
       } else {
         setError(false);

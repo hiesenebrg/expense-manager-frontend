@@ -174,7 +174,7 @@ function Navbar() {
                 {userdata?.avatar ? (
                   <Avatar
                     alt="Remy Sharp"
-                    src={`http://localhost:8000${userdata.avatar}`}
+                    src={`https://expense-manager-ezsi.onrender.com${userdata.avatar}`}
                   />
                 ) : (
                   <Avatar alt="Remy Sharp" src="" />

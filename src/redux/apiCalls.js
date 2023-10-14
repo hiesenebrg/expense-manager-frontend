@@ -37,7 +37,7 @@ export const updateprofile = async (dispatch, formdata, userid) => {
 
   try {
     const res = await axios.put(
-      `http://localhost:8000/api/user/update/${userid}`,
+      `https://expense-manager-ezsi.onrender.com/api/user/update/${userid}`,
       formdata,
       {
         headers: {

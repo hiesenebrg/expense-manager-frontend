@@ -53,8 +53,8 @@ const Register = () => {
         <Box
           sx={{
             border: 4,
-            height: "70vh",
-            width: "30vw",
+            height: "80vh",
+            width: {xs:"80vw",sm:"50vw",md:"30vw"},
             margin: "auto",
             mt: 10,
             positon: "absolute",
@@ -64,19 +64,19 @@ const Register = () => {
           <Stack sx={{ justifyContent: "center", alignItems: "center" }}>
             <Box
               sx={{
-                height: "8vh",
-                width: "20vw",
+                height: "10vh",
+                
                 position: "relative",
                 top: "30px",
                 mb: 8,
               }}
             >
               <Typography
-                variant="h5"
+                
                 sx={{
                   color: "black",
                   mt: 1,
-                  display: { xs: "none", md: "flex" },
+                  fontSize:{sx:"18px",sm:"20px",md:"23px"}
                 }}
               >
                 EXPENSE MANAGER
